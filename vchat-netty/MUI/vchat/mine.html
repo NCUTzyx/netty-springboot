@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+			
+			<ul class="mui-table-view" style="margin-top: 0px;">
+				<li class="mui-table-view-cell mui-media">
+					<a id="to_myphoto" href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
+						style="line-height: 42px; color: lightgray; margin-top: 3px;margin-left: 3px;"></span>
+						<img id="span_userphoto" class="mui-media-object mui-pull-right" 
+						src="css/registLogin/head.jpg" style="border-radius: 15%;">
+						<div class="mui-media-body" style="line-height: 42px;">
+							头像
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a id="to_nickname" href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright"
+						style="color: lightgray; margin-left: 3px; margin-right: 3px;"></"></span>
+						<span id="span_nickname" class="mui-pull-right" style="color: gray;font-size: 16px;"> </span>
+						<div class="mui-media-body">
+							名字
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<span id="span_username" class="mui-pull-right" style="color: gray;font-size: 16px;"> </span>
+						<div class="mui-media-body">
+						    微聊号
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a id="link_my_qrcode" href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright"
+						style="color: lightgray; margin-left: 3px; margin-right: 3px;"></span>
+						<img id="qrcode_img" class="mui-media-object mui-pull-right" src="image/qrcode.png" style="width: 20px; height: 20px;">
+						<div class="mui-media-body">
+						    二维码名片
+						</div>
+					</a>
+				</li>
+			</ul>
+			
+			<br>
+			
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media" style="text-align: center;">
+					<a id="logout" href="javascript:;">
+						<div class="mui-media-body">
+							退出登录
+						</div>
+					</a>
+				</li>
+			</ul>
+			
+		</div>
+		
+		<script src="js/mui.js"></script>
+		<script src="js/app.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				//鉴定当前webview的show,刷新当前页面信息
+				var meWebview = plus.webview.currentWebview();
+				meWebview.addEventListener("show",function(){
+					refreshUserInfo();
+				});
+				
+				// 点击头像进行页面跳转
+				var to_myphoto = document.getElementById("to_myphoto");
+				to_myphoto.addEventListener("tap",function() {
+					mui.openWindow("myphoto.html","myphoto.html");
+
+				});
+				
+				// 点击名称进行页面跳转
+				var to_nickname = document.getElementById("to_nickname");
+				to_nickname.addEventListener("tap",function(){
+					mui.openWindow("mynickname.html","mynickname.html");
+				});
+				
+				// 添加自定义事件，刷新头像
+				window.addEventListener("refresh",function(){
+					refreshUserInfo();
+				});
+				
+				// 查看我的二维码
+				var link_my_qrcode = document.getElementById("link_my_qrcode");
+				link_my_qrcode.addEventListener("tap", function(){
+					mui.openWindow({
+						url: "myQRCode.html", 
+						id: "myQRCode.html", 
+						styles: {}
+					});
+				});	
+				
+				//退出登录
+				var logout = document.getElementById("logout");
+				logout.addEventListener("tap",function(){
+					
+					app.clearGlobalInfo();
+					mui.openWindow("login.html","login.html");
+				});
+			});
+			
+			function refreshUserInfo () {
+				var user = app.getUserGlobalInfo();
+				if(user != null){
+					var userphoto = user.userPhoto;
+					var nickname = user.nickname;
+					var username = user.username;
+					
+					var span_nickname = document.getElementById("span_nickname");
+					var span_username = document.getElementById("span_username");
+					
+					span_nickname.innerHTML = nickname;
+					span_username.innerHTML = username;
+					
+					if(!app.isNull(userphoto)){
+						var span_userphoto = document.getElementById("span_userphoto");
+						span_userphoto.src = app.imageServerUrl + userphoto;
+					}	
+				}	
+			}
+	
+		</script>
+	</body>
+
+</html>

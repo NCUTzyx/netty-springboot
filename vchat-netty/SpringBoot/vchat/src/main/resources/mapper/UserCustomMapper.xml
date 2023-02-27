@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyx.mapper.UserCustomMapper">
+
+    <select id="queryFriendRequestList" resultType="com.zyx.pojo.vo.FriendRequestVO"
+            parameterType="String">
+    select
+         sender.id as sendUserId,
+         sender.username as sendUsername,
+         sender.user_photo as sendUserPhoto,
+         sender.nickname as sendNickname
+    from
+         vchat.user_request accepter
+    left join
+         vchat.user sender
+    on
+         accepter.send_user_id = sender.id
+    where
+          accepter.accept_user_id = #{acceptUserId}
+    </select>
+    
+    <select id="queryMyFriendList" resultType="com.zyx.pojo.vo.MyFriendsVO"
+            parameterType="String">
+    select
+        u.id as friendUserId,
+        u.username as friendUsername,
+        u.user_photo as friendUserPhoto,
+        u.nickname as friendNickname
+    from
+        vchat.user u
+            right join
+        vchat.relevance r
+        on
+            u.id = r.friend_id
+    where
+        r.user_id = #{userId}
+    </select>
+
+    <!--批处理更新消息为已签收-->
+    <update id="batchUpdateMsgSigned" >
+        update vchat.chat_message set is_read = 1 where id in
+            <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </update>
+
+</mapper>

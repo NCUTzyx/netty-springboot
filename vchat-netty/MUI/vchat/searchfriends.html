@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css">
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav title">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: gray"></a>
+			<a id="link_submit_search" class="mui-icon mui-icon-right-nav mui-pull-right" 
+			style="color: gray; font-size: 16px; font-weight: bolder; line-height: 25px;">搜索</a>
+			<h1 class="mui-title title-blue">添加好友</h1>
+		</header>
+		
+		<div class="mui-content">
+			<div class="mui-input-row">
+			    <input id="txt_friendname" type="text" class="mui-input-speech mui-input-clear" 
+			    	placeholder="请输入好友的微聊号...">
+			</div>
+		</div>
+
+		<script src="js/mui.js"></script>
+		<script src="js/app.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				plus.navigator.setStatusBarStyle('black');
+				plus.navigator.setStatusBarBackground("#EBECE9");
+				
+				var user = app.getUserGlobalInfo();
+				var txt_friendname = document.getElementById("txt_friendname");
+				
+				// 提交事件，搜索好友
+				var link_submit_search = document.getElementById("link_submit_search");
+				link_submit_search.addEventListener("tap", function() {
+					
+					var friendName = txt_friendname.value;
+										
+					plus.nativeUI.showWaiting("请稍等...");
+					mui.ajax(app.serverUrl + "/user/search/" + user.id + "/" + friendName,{
+						data:{},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/json'},	              
+						success:function(data){
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							plus.nativeUI.closeWaiting();
+							
+							if (data.status == 200) {
+								
+								mui.openWindow({
+									url:"searchFriendsResult.html",
+									id: "searchFriendsResult.html",
+									styles:{},
+									extras:{
+										//页面间互相传参
+										friend: data.data
+									}
+								});
+									
+							} else {
+								app.showToast(data.msg, "error");
+							}
+						}
+					});
+				});		
+			});
+		</script>
+	</body>
+
+</html>

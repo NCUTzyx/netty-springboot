@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css">
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav title">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: gray"></a>
+<a id="option" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: gray; font-size: 20px; font-weight: bolder; line-height: 18px;">...</a>
+			<h1 class="mui-title title-blue">头像</h1>
+		</header>
+		
+		<div class="mui-content">
+			<img id="img_myphoto" src="css/registLogin/head.jpg"/>
+		</div>
+		
+		<div id="sheet_myphoto" class="mui-popover mui-popover-bottom mui-popover-action ">
+			<!-- 可选择菜单 -->
+			<ul class="mui-table-view">
+			  <li class="mui-table-view-cell" style="color:  black;">
+				<a id="sheet_select" href="#">从手机相册选择</a>
+			  </li>
+			  <li class="mui-table-view-cell" style="color: black;" >
+				<a id="sheet_save" href="#">保存到手机</a>
+			  </li>
+			</ul>
+			<!-- 取消菜单 -->
+			<ul class="mui-table-view"> 
+			  <li class="mui-table-view-cell" style="color: lightcoral;">
+				<a href="#sheet_myphoto"><b>取消</b></a>
+			  </li>
+			</ul>
+		</div>
+
+		
+		<script src="js/mui.js"></script>
+		<script src="js/app.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			mui.plusReady(function(){
+				
+				plus.navigator.setStatusBarStyle('black');
+				plus.navigator.setStatusBarBackground("#EBECE9");
+				
+				refreshFace();
+				// 添加自定义事件，刷新头像
+				window.addEventListener("refresh",function(){
+					refreshFace();
+				});
+				
+				//获取可见屏幕的宽度
+				var imgWidth = document.body.clientWidth;
+				img_myphoto.width = imgWidth;
+				img_myphoto.height = imgWidth;
+				
+				//绑定选择操作
+				var option = document.getElementById("option");
+				option.addEventListener("tap",function(){
+					mui('#sheet_myphoto').popover('toggle');
+				});
+				
+				//绑定选择照片操作
+				var sheet_select = document.getElementById("sheet_select");
+				sheet_select.addEventListener("tap",function(){
+					mui.openWindow({
+						url: "plugin/v3.1.6/myphoto-uploader.html",
+						id: "myphoto-uploader.html",
+						createNew: true
+					});
+					mui('#sheet_myphoto').popover('toggle');
+				});
+
+				//绑定保存照片操作
+				var sheet_save = document.getElementById("sheet_save");
+				sheet_save.addEventListener("tap",function(){
+					
+					plus.nativeUI.showWaiting("下载中...");
+					var dtast = plus.downloader.createDownload(
+						app.imageServerUrl + userphoto,
+						{},
+						function(downloadFile,status){
+							plus.nativeUI.closeWaiting();
+							if(status == 200){
+								
+								var temp = downloadFile.filename;
+								//通过相册api保存图片到相册
+								plus.gallery.save(temp,function(){
+									app.showToast("保存照片成功","success");
+								})
+							}else {
+								app.showToast("下载错误...","error");
+								console.log("下载错误");
+							}
+						}
+					);			
+					dtast.start();  //启动下载任务
+				});		
+				
+			});
+			
+			function refreshFace() {
+				var img_myphoto = document.getElementById("img_myphoto");
+				var user = app.getUserGlobalInfo();
+				
+				if(user != null && !app.isNull(userphoto)){
+					var userphoto = user.userPhotoBig;
+					img_myphoto.src = app.imageServerUrl + userphoto;
+				}
+			}
+			
+		</script>
+	</body>
+
+</html>

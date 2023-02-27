@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="css/header.css">
+	<link rel="stylesheet" href="fontico/iconfont.css">
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+		
+		mui.plusReady(function(){
+			plus.navigator.setStatusBarStyle('light');
+			plus.navigator.setStatusBarBackground("#EBECE9");
+		})
+    </script>
+</head>
+<body>
+
+	<header class="mui-bar mui-bar-nav title">
+		<h1 class="mui-title title-blue" id="vchat-conet"><b>微聊</b></h1>
+	</header>	
+	
+	<nav class="mui-bar mui-bar-tab">
+		<a class="mui-tab-item mui-active" tabindex="0">
+			<span class="mui-icon iconfont icon-weixin"></span>
+			<span class="mui-tab-label">微聊</span>
+		</a>
+		<a class="mui-tab-item" tabindex="1">
+			<span class="mui-icon iconfont icon-tongxunlu"></span>
+			<span class="mui-tab-label">通讯录</span>
+		</a>
+		<a class="mui-tab-item" tabindex="2">
+			<span class="mui-icon iconfont icon-faxian"></span>
+			<span class="mui-tab-label">发现</span>
+		</a>
+		<a class="mui-tab-item" tabindex="3">
+			<span class="mui-icon iconfont icon-wo"></span>
+			<span class="mui-tab-label">我的</span>
+		</a>
+	</nav>
+	
+	<script type="text/javascript" charset="utf-8">
+		
+		var	vchatArray = [
+			{
+				pageId: "v-chat.html",
+				pageUrl: "v-chat.html"
+			},
+			{
+				pageId: "phonebook.html",
+				pageUrl: "phonebook.html"
+			},
+			{
+				pageId: "discovery.html",
+				pageUrl: "discovery.html"
+			},
+			{
+				pageId: "mine.html",
+				pageUrl: "mine.html"
+			}
+		];
+		
+		var	vchatStyle = {
+			top: "44px",
+			bottom: "50px",
+		};
+		
+		mui.plusReady(function(){
+			
+			//对网络连接进行事件监听
+			netConnetSwitch();
+			
+			//mui.back() 重写 关闭窗口方法
+			mui.back = function() {
+				return ;
+			}
+			
+			//获取当前窗口的WebviewObject对象
+			var indexPage = plus.webview.currentWebview();
+			
+			//向当前的主页 WebView 追加子页的四张 webview 对象
+			for (var i = 0; i < vchatArray.length; i ++) {
+				var vchatPage = plus.webview.create( vchatArray[i].pageUrl, vchatArray[i].pageId, vchatStyle );
+				//隐藏webview 窗口
+				vchatPage.hide();
+				//追加子页面到当前主页面
+				indexPage.append(vchatPage);
+			}
+			plus.webview.show(vchatArray[0].pageId);
+			
+			//批量绑定 tap 事件，展示不同的页面
+			mui(".mui-bar-tab").on("tap","a",function(){
+				
+				var id = this.getAttribute("tabindex");
+				//显示点击的tab选项所对应的页面
+				plus.webview.show(vchatArray[id].pageId,"fade-in",100);
+				
+				//隐藏其他不需要的页面
+				for(var	i = 0; i < vchatArray.length; i ++){
+					if(i != id){
+						plus.webview.hide(vchatArray[i].pageId,"fade-out",100);
+					}
+				}
+			}); 
+			
+			setTimeout("initData()","1000");
+		});
+		
+		//判断是否连接网络
+		function netConnetSwitch() {
+			
+			document.addEventListener("netchange",function(){
+				var connectinStatus = plus.networkinfo.getCurrentType();
+				
+				if(connectinStatus != 0 && connectinStatus != 1) {
+					// 打开网络连接
+					var vchat_conet = document.getElementById("vchat-conet");
+					vchat_conet.innerHTML = "<b>微聊</b>";
+					
+				} else {
+					//关闭网络连接	
+					var vchat_conet = document.getElementById("vchat-conet");
+					vchat_conet.innerHTML = "<b>微聊</b>(无网络)";
+				}
+			});
+		}
+		
+		// 预加载
+		function initData() {	
+			var vchat_chatlist = plus.webview.getWebviewById("v-chat.html");
+			mui.fire(vchat_chatlist,"refresh");
+			var vchat_mine = plus.webview.getWebviewById("mine.html");
+			mui.fire(vchat_mine,"refresh");
+		}
+		
+	</script>
+	
+</body>
+</html>

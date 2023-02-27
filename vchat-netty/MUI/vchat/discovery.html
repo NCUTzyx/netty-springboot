@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+			
+			<ul class="mui-table-view" style="margin-top: 0px;">
+				<li class="mui-table-view-cell mui-media">
+					<img class="mui-media-object mui-pull-left" src="image/friends.png" style="width: 28px; height: 28px;">
+					<p class="mui-ellipsis">
+						<span style="line-height: 28px; color: black; font-size: 16px; margin-left: 10px;">朋友圈</span>
+					</p>
+				</li>
+			</ul>
+			
+			<br/>	
+			
+			<ul class="mui-table-view">
+				<li id="search_friend" class="mui-table-view-cell mui-media">
+					<img class="mui-media-object mui-pull-left" src="image/addfriend.png" style="width: 28px; height: 28px;">
+					<p class="mui-ellipsis">
+						<span style="line-height: 28px; color: black; font-size: 16px; margin-left: 10px;">添加好友</span>
+					</p>
+				</li>
+				<li id="suan_friend" class="mui-table-view-cell mui-media">
+					<img class="mui-media-object mui-pull-left" src="image/scanscan.png" style="width: 28px; height: 28px;">
+					<p class="mui-ellipsis">
+						<span style="line-height: 28px; color: black; font-size: 16px; margin-left: 10px;">扫一扫</span>
+					</p>
+				</li>
+			</ul>
+		</div>
+		
+		<script src="js/mui.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				
+				var search_friend = document.getElementById("search_friend");
+				search_friend.addEventListener("tap",function(){
+					mui.openWindow("searchfriends.html","searchfriends.html");
+				});
+				
+				var suan_friend = document.getElementById("suan_friend");
+				suan_friend.addEventListener("tap",function(){
+					mui.openWindow("scanQR.html","scanQR.html");
+				});
+				
+				
+				
+			});
+		</script>
+	</body>
+
+</html>
